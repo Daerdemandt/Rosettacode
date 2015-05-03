@@ -2,6 +2,7 @@
 
 import curses
 from random import randrange, choice
+from collections import defaultdict
 
 letter_codes = [ord(ch) for ch in 'WASDRQwasdrq']
 actions = ['Up', 'Left', 'Down', 'Right', 'Restart', 'Exit']
@@ -97,12 +98,11 @@ class GameField(object):
 			top = '┌' + ('┬──────' * self.width + '┐')[1:]
 			mid = '├' + ('┼──────' * self.width + '┤')[1:]
 			bot = '└' + ('┴──────' * self.width + '┘')[1:]
+			separator = defaultdict(lambda: mid)
+			separator[0], separator[self.height] = top, bot
 			if not hasattr(draw_hor_separator, "counter"):
 				draw_hor_separator.counter = 0
-				current = top
-			else:
-				current = bot if draw_hor_separator.counter == self.height else mid
-			cast(current)
+			cast(separator[draw_hor_separator.counter])
 			draw_hor_separator.counter += 1
 
 		def draw_row(row):
@@ -176,6 +176,20 @@ gf.draw(stdscr)
 
 
 def main(stdscr):
-	pass		
+	'''
+	game_field = GameField()
+	state_actions = {} # Init, Game, Win, Gameover, Exit
+	def init():
+		game_field.reset()
+		return 'Game'
+
+	def win():
+		game_field.draw(stdscr)
+		action = get_user_action(stdscr)
+			if action == 'Restart':
+				return 'Init'
+			if action == 
+'''
+	pass
 
 curses.wrapper(main)
