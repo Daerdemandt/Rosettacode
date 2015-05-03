@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import curses
-from random import randrange, choice
+from random import randrange, choice # generate and place new tile
 from collections import defaultdict
 
 letter_codes = [ord(ch) for ch in 'WASDRQwasdrq']
@@ -35,6 +35,7 @@ class GameField(object):
 		self.score = 0
 		self.field = [[0 for i in range(self.width)] for j in range(self.height)]
 		self.spawn()
+		self.spawn()
 
 	def move(self, direction):
 		def move_row_left(row):
@@ -49,7 +50,7 @@ class GameField(object):
 				for i in range(len(row)):
 					if pair:
 						new_row.append(2 * row[i])
-						self.score += row[i]
+						self.score += 2 * row[i]
 						pair = False
 					else:
 						if i + 1 < len(row) and row[i] == row[i + 1]:
