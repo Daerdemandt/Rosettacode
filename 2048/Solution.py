@@ -91,8 +91,7 @@ class GameField(object):
 		gameover_string = '           GAME OVER'
 		win_string = '          YOU WIN!'
 		def cast(string):
-#			screen.addstr(string + '\n')
-			print(string)
+			screen.addstr(string + '\n')
 
 		def draw_hor_separator():
 			top = '┌' + ('┬──────' * self.width + '┐')[1:]
@@ -108,7 +107,7 @@ class GameField(object):
 		def draw_row(row):
 			cast(''.join('│{: ^5} '.format(num) if num > 0 else '|      ' for num in row) + '│')
 
-#		screen.clear()
+		screen.clear()
 		cast('SCORE: ' + str(self.score))
 		if 0 != self.highscore:
 			cast('HGHSCORE: ' + str(self.highscore))
@@ -133,7 +132,7 @@ class GameField(object):
 
 	def move_is_possible(self, direction):
 		def row_is_left_movable(row): 
-			def change(i):
+			def change(i): # true if there'll be change in i-th tile
 				if row[i] == 0 and row[i + 1] != 0: # Move
 					return True
 				if row[i] != 0 and row[i + 1] == row[i]: # Merge
@@ -159,37 +158,42 @@ class GameField(object):
 		else:
 			return False
 
-
-
-gf = GameField()
-stdscr=1
-gf.draw(stdscr)
-#get_user_action(stdscr)
-gf.move('Up')
-gf.draw(stdscr)
-#get_user_action(stdscr)
-gf.move('Left')
-gf.draw(stdscr)
-#get_user_action(stdscr)
-gf.move('Right')
-gf.draw(stdscr)
-
-
 def main(stdscr):
-	'''
 	game_field = GameField()
 	state_actions = {} # Init, Game, Win, Gameover, Exit
 	def init():
 		game_field.reset()
 		return 'Game'
 
-	def win():
+	state_actions['Init'] = init
+
+	def not_game(state):
 		game_field.draw(stdscr)
 		action = get_user_action(stdscr)
-			if action == 'Restart':
-				return 'Init'
-			if action == 
-'''
-	pass
+		responses = defaultdict(lambda: state)
+		responses['Restart'], responses['Exit'] = 'Init', 'Exit'
+		return responses[action]
 
+	state_actions['Win'] = lambda: not_game('Win')
+	state_actions['Gameover'] = lambda: not_game('Gameover')
+
+	def game():
+		game_field.draw(stdscr)
+		action = get_user_action(stdscr)
+		if action == 'Restart':
+			return 'Init'
+		if action == 'Exit':
+			return 'Exit'
+		if game_field.move(action): # move successful
+			if game_field.is_win():
+				return 'Win'
+			if game_field.is_gameover():
+				return 'Gameover'
+		return 'Game'
+		
+	state_actions['Game'] = game
+
+	state = 'Init'
+	while state != 'Exit':
+		state = state_actions[state]()
 curses.wrapper(main)
