@@ -160,7 +160,8 @@ class GameField(object):
 			return False
 
 def main(stdscr):
-	game_field = GameField()
+	curses.use_default_colors()
+	game_field = GameField(win=32)
 	state_actions = {} # Init, Game, Win, Gameover, Exit
 	def init():
 		game_field.reset()
